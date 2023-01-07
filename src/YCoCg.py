@@ -8,9 +8,9 @@ import main
 
 import PNG as EC
 parser = EC.parser
-parser.add_argument('-q', '--quantization', type=str, help='Quantization to use in the compression pipeline, deadzone or Lloyd-Max', default='deadzone')
+parser.add_argument('-m', '--method_quantization', type=str, help='Quantization to use in the compression pipeline, deadzone or Lloyd-Max', default='deadzone')
 args = parser.parse_args()
-if 'Lloyd-Max' == args.quantization:
+if 'Lloyd-Max' == args.method_quantization:
     import LloydMax as Q
 else:
     import deadzone as Q
@@ -22,8 +22,7 @@ class CoDec(Q.CoDec):
 
     def encode(self):
         img = self.read()
-        img_128 = img.astype(np.int16) - 128
-        YCoCg_img = from_RGB(img_128)
+        YCoCg_img = from_RGB(img)
         k = self.quantize(YCoCg_img)
         self.write(k)
         rate = (self.output_bytes*8)/(img.shape[0]*img.shape[1])
@@ -33,8 +32,7 @@ class CoDec(Q.CoDec):
         k = self.read()
         YCoCg_y = self.dequantize(k)
         #y_128 = to_RGB(YCoCg_y.astype(np.int16))
-        y_128 = to_RGB(YCoCg_y)
-        y = (y_128.astype(np.int16) + 128)
+        y = to_RGB(YCoCg_y)
         y = np.clip(y, 0, 255).astype(np.uint8)
         self.write(y)
         rate = (self.input_bytes*8)/(k.shape[0]*k.shape[1])
