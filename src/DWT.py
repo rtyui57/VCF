@@ -20,6 +20,7 @@ from color_transforms.YCoCg import to_RGB
 
 EC.parser.add_argument("-l", "--levels", type=EC.int_or_str, help=f"Number of decomposition levels (default: 5)", default=5)
 EC.parser_encode.add_argument("-w", "--wavelet", type=EC.int_or_str, help=f"Wavelet name (default: \"db5\")", default="db5")
+EC.parser_decode.add_argument("-r", "--resolution", type=int, help=f"W", default=5)
 
 class CoDec(CT.CoDec):
 
@@ -34,6 +35,7 @@ class CoDec(CT.CoDec):
                 logging.info(f"Written {args.output}_wavelet_name.txt")
             logging.info(f"wavelet={args.wavelet} ({self.wavelet})")
         else:
+            self.resolution = args.levels - args.resolution
             with open(f"{args.input}_wavelet_name.txt", "r") as f:
                 wavelet_name = f.read()
                 logging.info(f"Read wavelet = \"{wavelet_name}\" from {args.input}_wavelet_name.txt")
@@ -54,7 +56,7 @@ class CoDec(CT.CoDec):
     def decode(self):
         decom_k = self.read_decom()
         decom_y = self.dequantize_decom(decom_k)
-        CT_y = space_synthesize(decom_y, self.wavelet, self.levels)
+        CT_y = space_synthesize(decom_y, self.wavelet, self.levels - self.resolution)
         y_128 = to_RGB(CT_y)
         y = (y_128.astype(np.int16) + 128)
         y = np.clip(y, 0, 255).astype(np.uint8)
@@ -88,7 +90,7 @@ class CoDec(CT.CoDec):
         LL = self.read_fn(fn)
         decom = [LL]
         resolution_index = self.levels
-        for l in range(self.levels, 0, -1):
+        for l in range(self.levels, self.resolution, -1):
             subband_names = ["LH", "HL", "HH"]
             spatial_resolution = []
             for subband_name in subband_names:
