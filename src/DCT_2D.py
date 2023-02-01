@@ -13,7 +13,10 @@ class CoDec(Q.CoDec):
     def __init__(self, args):
         super().__init__(args)
         if self.encoding:
-            self.block_size = args.block_size
+            if args.automatic:
+                self.block_size = self.get_block_size(args.lambdas)
+            else:
+                self.block_size = 2**args.block_size
             logging.info(f"Block size = {self.block_size}")
             with open("block_size.txt", 'w') as f:
                 f.write(f"{self.block_size}")
@@ -152,8 +155,38 @@ class CoDec(Q.CoDec):
     def read_float64(self):
         return cv2.imread(self.args.input.replace('.png', '.exr'), cv2.IMREAD_UNCHANGED)
 
+    def get_block_size(self, lambdas):
+        #
+        logging.info(f"Using {lambdas} as lamba in lagrangian optimization")
+        min = 1000000
+        result = 0
+        for i in range(0, 7):
+            block_size = 2**i
+            #Encode
+            img = self.read()
+            YCoCg = from_RGB(img)
+            dct = block_DCT.analyze_image(YCoCg, block_size, block_size)
+            quantized = block_DCT.uniform_quantize(dct, block_size, block_size, 3, self.QSS)
+            size = self.write_float64(quantized)
+
+            #Decode
+            dequantized = block_DCT.uniform_dequantize(quantized, block_size, block_size, 3, self.QSS)
+            dct = block_DCT.synthesize_image(dequantized, block_size, block_size).astype(np.uint8)
+            YCoCg = to_RGB(dct.astype(np.uint8))
+            #Get lagraungian
+            rate = (size*8)/(img.shape[0]*img.shape[1])
+            RMSE = distortion.RMSE(img, YCoCg)
+            J = rate + (lambdas*RMSE)
+            logging.info("Block size of " + str(block_size) + " has J: " + str(J))
+            if J < min:
+                min = J
+                result = block_size
+        return result
+
 
 if __name__ == "__main__":
     parser = EC.parser_encode
     parser.add_argument("-b", "--block_size", type=int, help="Size fo the block of pixels used for tge DCT operation, if 4, a 4x4 block willbe used", default=8)
+    parser.add_argument("-a", "--automatic", type=bool, help="Detect the most optime block size", default=False)
+    parser.add_argument("-l", "--lambdas", type=float, help="Lambda used in lagrangian optimization", default=1)
     main.main(EC.parser, logging, CoDec)
