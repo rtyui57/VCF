@@ -59,7 +59,7 @@ class SequenceCoDec(deadzone.CoDec):
                     _MVs[..., 1] = ndimage.zoom(MVs[..., 1], next.shape[0]/MVs.shape[0], order=0)
                     predicted = prediction.make(current,_MVs[:,:, 0:1])
                     path = ENCODE_SUBFOLDER + SLASH + str(index) + '.png'
-                    cv2.imwrite(ENCODE_SUBFOLDER + SLASH + str(index) + '.exr', _MVs)
+                    cv2.imwrite(ENCODE_SUBFOLDER + SLASH + str(index) + 'VM.png', _MVs)
                     cv2.imwrite(path, self.resta(predicted, next))
                     self.args.input = path
                     self.args.output = path
@@ -72,7 +72,7 @@ class SequenceCoDec(deadzone.CoDec):
         current = None
         index = 0
         for file in files:
-            if file.endswith('.png'):
+            if file.endswith('.png') and not file.endswith('VM.png'):
                 if index == 0:
                     self.args.input = encoded_folder + SLASH + file
                     self.args.output = DECODE_SUBFOLDER + SLASH + file
@@ -82,9 +82,10 @@ class SequenceCoDec(deadzone.CoDec):
                     path = DECODE_SUBFOLDER + SLASH + str(index)  + '.png'
                     self.args.input = encoded_folder + SLASH + file
                     self.args.output = path
+                    print(self.args.input)
                     super().decode()
                     difference = cv2.imread(path)
-                    _MVs = cv2.imread(encoded_folder + SLASH + str(index) + '.exr')
+                    _MVs = cv2.imread(encoded_folder + SLASH + str(index) + 'VM.png')
                     predicted = prediction.make(current,_MVs[:,:, 0:1])
                     next = self.suma(predicted, difference)
                     cv2.imwrite(path, next)
