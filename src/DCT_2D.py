@@ -16,7 +16,7 @@ class CoDec(Q.CoDec):
             if args.automatic:
                 self.block_size = self.get_block_size(args.lambdas)
             else:
-                self.block_size = 2**args.block_size
+                self.block_size = args.block_size
             logging.info(f"Block size = {self.block_size}")
             with open("block_size.txt", 'w') as f:
                 f.write(f"{self.block_size}")
@@ -186,7 +186,7 @@ class CoDec(Q.CoDec):
 
 if __name__ == "__main__":
     parser = EC.parser_encode
-    parser.add_argument("-b", "--block_size", type=int, help="Size fo the block of pixels used for tge DCT operation, if 4, a 4x4 block willbe used", default=2)
+    parser.add_argument("-b", "--block_size", type=int, help="Size fo the block of pixels used for tge DCT operation, if 4, a 4x4 block willbe used", default=4)
     parser.add_argument("-a", "--automatic", type=bool, help="Detect the most optime block size", default=False)
     parser.add_argument("-l", "--lambdas", type=float, help="Lambda used in lagrangian optimization", default=1)
     main.main(EC.parser, logging, CoDec)
