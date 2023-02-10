@@ -147,7 +147,6 @@ class CoDec(CT.CoDec):
         io.imsave(fn, img, check_contrast=False)
         self.required_bytes = os.path.getsize(fn)
         logging.info(f"Written {self.required_bytes} bytes in {fn}")
-
     def __read_fn(self, fn):
         img = io.imread(fn)
         logging.info(f"Read {fn} of shape {img.shape}")

@@ -8,11 +8,11 @@ import main
 
 import PNG as EC
 EC.parser.add_argument('-m', '--method_quantization', type=str, help='Quantization to use in the compression pipeline, deadzone or Lloyd-Max', default='deadzone')
-args = EC.parser.parse_args()
-if 'Lloyd-Max' == args.method_quantization:
-    import LloydMax as Q
-else:
-    import deadzone as Q
+#args = EC.parser.parse_args()
+#if 'Lloyd-Max' == args.method_quantization:
+    #import LloydMax as Q
+#else:
+import deadzone as Q
 
 from color_transforms.YCoCg import from_RGB # pip install "color_transforms @ git+https://github.com/vicente-gonzalez-ruiz/color_transforms"
 from color_transforms.YCoCg import to_RGB
