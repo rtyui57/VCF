@@ -5,7 +5,7 @@ import main
 import PNG as EC
 import deadzone as Q
 from color_transforms.DCT import from_RGB, to_RGB
-
+import cv2 
 class CoDec(Q.CoDec):
 
     def encode(self):
@@ -25,6 +25,18 @@ class CoDec(Q.CoDec):
         self.write(y)
         rate = (self.input_bytes*8)/(k.shape[0]*k.shape[1])
         return rate
+
+    def decode_img(self, img_path):
+        img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
+        k = self.dequantize(img)
+        YCoCg = to_RGB(k)
+        return YCoCg
+
+    def encode_img(self, img_path):
+        img = cv2.imread(img_path)
+        YCoCg = from_RGB(img)
+        dct = self.quantize(YCoCg)
+        return dct
 
 if __name__ == "__main__":
     main.main(EC.parser, logging, CoDec)

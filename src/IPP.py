@@ -11,7 +11,7 @@ import logging
 
 ENCODE_SUBFOLDER = 'encoded'
 DECODE_SUBFOLDER = 'decoded'
-SLASH = '\\'
+SLASH = '/'
 
 class SequenceCoDec(deadzone.CoDec):
 

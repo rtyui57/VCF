@@ -37,7 +37,6 @@ class CoDec(EC.CoDec):
         os.remove("labels.npy")
         os.remove("centroids.npy")
         os.remove("shape.npy")
-        os.remove("encoded.png")
         k = labels.astype(np.uint8) # Up to 256 bins
         img = (centroids[k].reshape(shape[0], shape[1], -1) * 255).astype(np.uint8)
         self.write(img)

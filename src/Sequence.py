@@ -1,4 +1,4 @@
-import DCT_2D
+import DCT
 import os
 import main
 import logging
@@ -7,9 +7,9 @@ import cv2
 
 ENCODE_SUBFOLDER = 'encoded'
 DECODE_SUBFOLDER = 'decoded'
-SLASH = '\\'
+SLASH = '/'
 
-class SequenceCoDec(DCT_2D.CoDec):
+class SequenceCoDec(DCT.CoDec):
 
     def __init__(self, args):
         super().__init__(args)
@@ -24,7 +24,7 @@ class SequenceCoDec(DCT_2D.CoDec):
             os.mkdir(encode_folder)
         for file in files:
             if file.endswith('.png') or file.endswith('.jpg'):
-                encoded = self.encode_img(file, 2)
+                encoded = self.encode_img(file)
                 cv2.imwrite(ENCODE_SUBFOLDER + SLASH + file, encoded)
                 logging.info(f'Encoded {file}')
         return 
@@ -39,7 +39,7 @@ class SequenceCoDec(DCT_2D.CoDec):
             os.mkdir(decode_folder)
         for file in files:
             if file.endswith('.png') or file.endswith('.jpg'):
-                decoded = self.decode_img(encoded_folder + SLASH + file, 2)
+                decoded = self.decode_img(encoded_folder + SLASH + file)
                 cv2.imwrite(DECODE_SUBFOLDER + SLASH + file, decoded)
         return 
 

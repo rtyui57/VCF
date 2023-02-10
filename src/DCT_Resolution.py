@@ -46,10 +46,10 @@ class CoDec(Q.CoDec):
         return rate
 
     def write_float64(self, img):
-        cv2.imwrite(self.args.output.replace('.png', '.exr'), img)
+        cv2.imwrite(self.args.output, img)
 
     def read_float64(self):
-        return cv2.imread(self.args.input.replace('.png', '.exr'), cv2.IMREAD_UNCHANGED)
+        return cv2.imread(self.args.input, cv2.IMREAD_UNCHANGED)
 
 
 if __name__ == "__main__":

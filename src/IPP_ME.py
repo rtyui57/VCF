@@ -11,7 +11,7 @@ import logging
 
 ENCODE_SUBFOLDER = 'encoded'
 DECODE_SUBFOLDER = 'decoded'
-SLASH = '\\'
+SLASH = '/'
 
 class SequenceCoDec(deadzone.CoDec):
 
@@ -67,7 +67,6 @@ class SequenceCoDec(deadzone.CoDec):
                     current = cv2.imread(file)
                 index += 1
         logging.info(f'{index} images have been encoded')
-    
     def _decode(self, files, encoded_folder):
         current = None
         index = 0
