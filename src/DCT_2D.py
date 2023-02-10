@@ -150,10 +150,10 @@ class CoDec(Q.CoDec):
                 [99, 99, 99, 99, 99, 99, 99, 99]]
 
     def write_float64(self, img):
-        cv2.imwrite(self.args.output.replace('.png', '.exr'), img)
+        cv2.imwrite(self.args.output, img)
 
     def read_float64(self):
-        return cv2.imread(self.args.input.replace('.png', '.exr'), cv2.IMREAD_UNCHANGED)
+        return cv2.imread(self.args.input, cv2.IMREAD_UNCHANGED)
 
     def get_block_size(self, lambdas):
         #
@@ -186,7 +186,7 @@ class CoDec(Q.CoDec):
 
 if __name__ == "__main__":
     parser = EC.parser_encode
-    parser.add_argument("-b", "--block_size", type=int, help="Size fo the block of pixels used for tge DCT operation, if 4, a 4x4 block willbe used", default=8)
+    parser.add_argument("-b", "--block_size", type=int, help="Size fo the block of pixels used for tge DCT operation, if 4, a 4x4 block willbe used", default=2)
     parser.add_argument("-a", "--automatic", type=bool, help="Detect the most optime block size", default=False)
     parser.add_argument("-l", "--lambdas", type=float, help="Lambda used in lagrangian optimization", default=1)
     main.main(EC.parser, logging, CoDec)
